@@ -27,7 +27,10 @@ def test_main(tmp_path, capsys):
     subs_file = tmp_path / "subs.json"
     with open(subs_file, "w") as fh:
         json.dump(subs, fh)
-    main([str(target), str(subs_file)])
+
+    retval = main([str(target), str(subs_file)])
+    assert retval == 0
+
     out, err = capsys.readouterr()
     assert out == expected
     assert err == ""
@@ -41,9 +44,12 @@ def test_inplace_substitution(tmp_path, capsys, flag: str):
     with open(subs_file, "w") as fh:
         json.dump(subs, fh)
 
-    main([str(target), str(subs_file), flag])
+    retval = main([str(target), str(subs_file), flag])
+    assert retval == 0
+
     out, err = capsys.readouterr()
     assert out == ""
     assert err == ""
+
     actual = target.read_text()
     assert actual == expected
