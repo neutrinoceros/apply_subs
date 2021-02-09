@@ -4,12 +4,15 @@ import argparse
 import json
 import sys
 import tempfile
+from pathlib import Path
 from shutil import copy
-from subprocess import SubprocessError, run
+from subprocess import CalledProcessError, run
+
+BASE_COMMAND = ["sed", "-i", "-e"]
 
 
 def _sub(old: str, new: str, filename: str) -> str:
-    comm = ["sed", "-i", "-e", f"s/{old}/{new}/g", filename]
+    comm = BASE_COMMAND + [f"s/{old}/{new}/g", filename]
     res = run(comm, capture_output=True, check=True)
     return res.stdout.decode()
 
@@ -23,6 +26,10 @@ def main(argv=None) -> int:
     parser.add_argument("-i", "--inplace", action="store_true")
     args = parser.parse_args(argv)
 
+    if not Path(args.target).is_file():
+        print(f"Error: {args.target} not found.", file=sys.stderr)
+        return 1
+
     with open(args.subs, "r") as fh:
         subs = json.load(fh)
 
@@ -31,9 +38,10 @@ def main(argv=None) -> int:
         for old, new in subs.items():
             try:
                 _sub(old, new, workfile.name)
-            except SubprocessError:
+            except (CalledProcessError, FileNotFoundError):
                 print(
-                    f"Error in applying subsitutions to {args.target}", file=sys.stderr
+                    f"Error: failed to apply subsitutions to {args.target}",
+                    file=sys.stderr,
                 )
                 return 1
         with open(workfile.name, "r") as fh:
