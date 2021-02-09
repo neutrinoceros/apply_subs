@@ -1,5 +1,7 @@
 import json
 
+import pytest
+
 from apply_subs.main import main
 
 subs = {
@@ -29,3 +31,19 @@ def test_main(tmp_path, capsys):
     out, err = capsys.readouterr()
     assert out == expected
     assert err == ""
+
+
+@pytest.mark.parametrize("flag", ["-i", "--inplace"])
+def test_inplace_substitution(tmp_path, capsys, flag: str):
+    target = tmp_path / "hello.txt"
+    target.write_text(content)
+    subs_file = tmp_path / "subs.json"
+    with open(subs_file, "w") as fh:
+        json.dump(subs, fh)
+
+    main([str(target), str(subs_file), flag])
+    out, err = capsys.readouterr()
+    assert out == ""
+    assert err == ""
+    actual = target.read_text()
+    assert actual == expected
