@@ -29,8 +29,8 @@ Hello dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incidid
 ## patch mode
 
 
-Adding mode (`-p/--patch`)
-prints a patch diff instead of the end result
+In patch mode (`-p/--patch`),
+print a patch diff instead of the end result
 ```patch
 --- mytext.txt
 +++ mytext.txt (patched)
@@ -39,7 +39,7 @@ prints a patch diff instead of the end result
 +Hello dolor sit amet, consectetur goodbye
 ```
 
-Use `-cp/--cpatch/--colored-patch` to for a colored output (when supported).
+Use `-cp/--cpatch/--colored-patch` for a colored output (when supported).
 
 ## inplace substitutions
 `-i/--inplace`
