@@ -12,40 +12,40 @@ From the top level of the repo
 $ pip install .
 ```
 
-## Example
+# Examples
 
-`mytext.txt`
-```
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-```
-
-`mysubs.json` contains the substitutions (new: old)
-```json
-{
-    "Hello": "Lorem ipsum",
-    "goodbye": "magna aliqua"
-}
-```
-
-Then from a shell
+## minimal
 ```shell
+$ echo "Lorem ipsum dolor sit amet, consectetur adipiscing elit" > mytext.txt
+$ echo '{"Hello": "Lorem ipsum", "goodbye": "adipiscing elit"}' > mysubs.json
 $ apply-subs mytext.txt mysubs.json
 ```
-
-Will print
+will print the patched content
 ```
 Hello dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore goodbye.
 ```
 
-Inplace substitutions (`-i/--inplace`)
+## patch mode
+
+
+Adding mode (`-p/--patch`)
+prints a patch diff instead of the end result
+```patch
+--- mytext.txt
++++ mytext.txt (patched)
+@@ -1 +1 @@
+-Lorem ipsum dolor sit amet, consectetur adipiscing elit
++Hello dolor sit amet, consectetur goodbye
+```
+
+Use `-cp/--cpatch/--colored-patch` to for a colored output (when supported).
+
+## inplace substitutions
+`-i/--inplace`
 ```
 apply-subs --inplace mytext.txt mysubs.json
 ```
-which is equivalent to
+is equivalent to
 ```
 apply-subs mytext.txt mysubs.json > mytext.txt
 ```
-
->Patch mode (`-p/--patch`)
->prints a patch diff instead of the end result
->NOT IMPLEMENTED YET
