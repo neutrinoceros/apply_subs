@@ -1,32 +1,10 @@
-import json
-
 import pytest
 
 from apply_subs.main import main
 
-subs = {
-    "Helo": "Hello",
-    "helo": "hello",
-}
 
-
-content = """
-Helo world !
-just came here to say helo.
-"""
-
-expected = """
-Hello world !
-just came here to say hello.
-"""
-
-
-def test_main(tmp_path, capsys):
-    target = tmp_path / "hello.txt"
-    target.write_text(content)
-    subs_file = tmp_path / "subs.json"
-    with open(subs_file, "w") as fh:
-        json.dump(subs, fh)
+def test_main(simple_setup, capsys):
+    target, subs_file, expected = simple_setup
 
     retval = main([str(target), str(subs_file)])
     assert retval == 0
@@ -37,12 +15,8 @@ def test_main(tmp_path, capsys):
 
 
 @pytest.mark.parametrize("flag", ["-i", "--inplace"])
-def test_inplace_substitution(tmp_path, capsys, flag: str):
-    target = tmp_path / "hello.txt"
-    target.write_text(content)
-    subs_file = tmp_path / "subs.json"
-    with open(subs_file, "w") as fh:
-        json.dump(subs, fh)
+def test_inplace_substitution(simple_setup, capsys, flag: str):
+    target, subs_file, expected = simple_setup
 
     retval = main([str(target), str(subs_file), flag])
     assert retval == 0
@@ -55,12 +29,8 @@ def test_inplace_substitution(tmp_path, capsys, flag: str):
     assert actual == expected
 
 
-def test_missing_target(tmp_path, capsys):
-    target = tmp_path / "hello.txt"
-    target.write_text(content)
-    subs_file = tmp_path / "subs.json"
-    with open(subs_file, "w") as fh:
-        json.dump(subs, fh)
+def test_missing_target(simple_setup, capsys):
+    target, subs_file, expected = simple_setup
 
     typo_target = target.with_suffix(".this_file_doesnt_exists")
     assert not typo_target.exists()
@@ -73,14 +43,10 @@ def test_missing_target(tmp_path, capsys):
     assert err == f"Error: {typo_target} not found.\n"
 
 
-def test_broken_call(tmp_path, capsys, monkeypatch):
+def test_broken_call(simple_setup, capsys, monkeypatch):
+    target, subs_file, expected = simple_setup
 
     monkeypatch.setattr("apply_subs.main.BASE_COMMAND", ["not_a_real_command $HOME"])
-    target = tmp_path / "hello.txt"
-    target.write_text(content)
-    subs_file = tmp_path / "subs.json"
-    with open(subs_file, "w") as fh:
-        json.dump(subs, fh)
 
     retval = main([str(target), str(subs_file)])
     assert retval != 0
