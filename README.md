@@ -4,18 +4,48 @@
 [![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort/)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-`data.json`
+Apply a dictionnary (json) of substitutions to a text file.
+## Installing
+
+From the top level of the repo
+```shell
+$ pip install .
+```
+
+## Example
+
+`mytext.txt`
+```
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+```
+
+`mysubs.json`
 ```json
 {
-    "helo": "Hello",
+    "Lorem ipsum": "Hello",
+    "magna aliqua": "goodbye",
 }
 ```
 
 Then from a shell
 ```shell
-apply-subs hello.txt data.json
+$ apply-subs mytext.txt mysubs.json
 ```
 
-```patch
-...
+Will print
 ```
+Hello dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore goodbye.
+```
+
+Inplace substitutions (`-i/--inplace`)
+```
+apply-subs --inplace mytext.txt mysubs.json
+```
+which is equivalent to
+```
+apply-subs mytext.txt mysubs.json > mytext.txt
+```
+
+>Patch mode (`-p/--patch`)
+>prints a patch diff instead of the end result
+>NOT IMPLEMENTED YET
