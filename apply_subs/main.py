@@ -7,13 +7,20 @@ import tempfile
 from pathlib import Path
 from shutil import copy
 from subprocess import CalledProcessError, run
+from typing import List, Union
+
+from more_itertools import always_iterable
+from schema import Or, Schema
 
 BASE_COMMAND = ["sed", "-i", "-e"]
 
+SUBS_SCHEMA = Schema({str: Or(str, list)})
 
-def _sub(old: str, new: str, filename: str) -> str:
-    comm = BASE_COMMAND + [f"s/{old}/{new}/g", filename]
-    res = run(comm, capture_output=True, check=True)
+
+def _sub(to_replace: Union[str, List[str]], new: str, filename: str) -> str:
+    for old in always_iterable(to_replace):
+        comm = BASE_COMMAND + [f"s/{old}/{new}/g", filename]
+        res = run(comm, capture_output=True, check=True)
     return res.stdout.decode()
 
 
@@ -33,9 +40,13 @@ def main(argv=None) -> int:
     with open(args.subs, "r") as fh:
         subs = json.load(fh)
 
+    if not SUBS_SCHEMA.is_valid(subs):
+        print("Error: unrecognized json schema.", file=sys.stderr)
+        return 1
+
     with tempfile.NamedTemporaryFile() as workfile:
         copy(args.target, workfile.name)
-        for old, new in subs.items():
+        for new, old in subs.items():
             try:
                 _sub(old, new, workfile.name)
             except (CalledProcessError, FileNotFoundError):
