@@ -23,7 +23,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 ```json
 {
     "Hello": "Lorem ipsum",
-     "goodbye": "magna aliqua",
+    "goodbye": "magna aliqua"
 }
 ```
 
