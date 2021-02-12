@@ -19,11 +19,11 @@ $ pip install .
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
 ```
 
-`mysubs.json`
+`mysubs.json` contains the substitutions (new: old)
 ```json
 {
-    "Lorem ipsum": "Hello",
-    "magna aliqua": "goodbye",
+    "Hello": "Lorem ipsum",
+     "goodbye": "magna aliqua",
 }
 ```
 
