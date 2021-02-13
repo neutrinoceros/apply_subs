@@ -6,7 +6,7 @@ import pytest
 from apply_subs import __version__
 from apply_subs.main import main
 
-USAGE_MESSAGE = """usage: apply-subs [-h] [-s SUBS] [-i | -p | -cp] [-v] [target ...]
+USAGE_MESSAGE = """usage: apply-subs [-h] [-s SUBS] [-i | -d | -cp] [-v] [target ...]
 
 positional arguments:
   target                target text file(s)
@@ -16,9 +16,9 @@ optional arguments:
   -s SUBS, --subs SUBS  json file describing substitutions to apply (order
                         matters).
   -i, --inplace
-  -p, --patch           print a patch.
-  -cp, --cpatch, --colored-patch
-                        print a colored patch.
+  -d, --diff            print a diff.
+  -cp, --cdiff, --colored-diff
+                        print a colored diff.
   -v, --version         print apply-subs version.
 """
 
