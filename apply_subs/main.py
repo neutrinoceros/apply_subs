@@ -37,10 +37,11 @@ def colored_diff(diff):
 
 def main(argv: Optional[List[str]] = None) -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("target", nargs="?", help="a target text file.")
+    parser.add_argument("target", nargs="*", help="target text file(s)")
     parser.add_argument(
-        "subs",
-        nargs="?",
+        "-s",
+        "--subs",
+        action="store",
         help="json file describing substitutions to apply (order matters).",
     )
     group = parser.add_mutually_exclusive_group()
@@ -74,10 +75,6 @@ def main(argv: Optional[List[str]] = None) -> int:
         parser.print_help(file=sys.stderr)
         return 1
 
-    if not Path(args.target).is_file():
-        print(f"Error: {args.target} not found.", file=sys.stderr)
-        return 1
-
     with open(args.subs, "r") as fh:
         subs = json.load(fh)
 
@@ -85,24 +82,26 @@ def main(argv: Optional[List[str]] = None) -> int:
         print("Error: unrecognized json schema.", file=sys.stderr)
         return 1
 
-    with open(args.target, "r") as fh:
-        new_content = fh.read()
+    for target in args.target:
+        if not Path(target).is_file():
+            print(f"Error: {target} not found.", file=sys.stderr)
+            return 1
+        with open(target, "r") as fh:
+            new_content = fh.read()
 
-    for new, old in subs.items():
-        new_content = _sub(old, new, new_content)
+        for new, old in subs.items():
+            new_content = _sub(old, new, new_content)
 
-    if args.inplace:
-        with open(args.target, "w") as fh:
-            fh.write(new_content)
-    elif args.patch or args.colored_patch:
-        s1 = open(args.target).read().splitlines(keepends=True)
-        s2 = new_content.splitlines(keepends=True)
-        diff = unified_diff(
-            s1, s2, fromfile=args.target, tofile=f"{args.target} (patched)"
-        )
-        if args.colored_patch:
-            diff = colored_diff(diff)
-        print("".join(list(diff)))
-    else:
-        print(new_content, end="")
+        if args.inplace:
+            with open(target, "w") as fh:
+                fh.write(new_content)
+        elif args.patch or args.colored_patch:
+            s1 = open(target).read().splitlines(keepends=True)
+            s2 = new_content.splitlines(keepends=True)
+            diff = unified_diff(s1, s2, fromfile=target, tofile=f"{target} (patched)")
+            if args.colored_patch:
+                diff = colored_diff(diff)
+            print("".join(list(diff)))
+        else:
+            print(new_content, end="")
     return 0

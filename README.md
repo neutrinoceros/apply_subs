@@ -19,7 +19,7 @@ $ pip install apply-subs
 ```shell
 $ echo "Lorem ipsum dolor sit amet, consectetur adipiscing elit" > mytext.txt
 $ echo '{"Hello": "Lorem ipsum", "goodbye": "adipiscing elit"}' > mysubs.json
-$ apply-subs mytext.txt mysubs.json
+$ apply-subs mytext.txt -s mysubs.json
 ```
 will print the patched content
 ```
@@ -44,9 +44,9 @@ Use `-cp/--cpatch/--colored-patch` for a colored output (when supported).
 ## inplace substitutions
 `-i/--inplace`
 ```
-apply-subs --inplace mytext.txt mysubs.json
+apply-subs --inplace mytext.txt -s mysubs.json
 ```
 is equivalent to
 ```
-apply-subs mytext.txt mysubs.json > mytext.txt
+apply-subs mytext.txt -s mysubs.json > mytext.txt
 ```

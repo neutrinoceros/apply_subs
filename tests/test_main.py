@@ -6,7 +6,7 @@ from apply_subs.main import main
 def test_main(simple_setup, capsys):
     target, subs_file, expected = simple_setup
 
-    retval = main([str(target), str(subs_file)])
+    retval = main([str(target), "-s", str(subs_file)])
     assert retval == 0
 
     out, err = capsys.readouterr()
@@ -18,7 +18,7 @@ def test_main(simple_setup, capsys):
 def test_inplace_substitution(simple_setup, capsys, flag: str):
     target, subs_file, expected = simple_setup
 
-    retval = main([str(target), str(subs_file), flag])
+    retval = main([str(target), "-s", str(subs_file), flag])
     assert retval == 0
 
     out, err = capsys.readouterr()
@@ -41,7 +41,7 @@ def test_patch(simple_setup, capsys, monkeypatch, flag: str):
 
     monkeypatch.setattr("apply_subs.main.Fore", ColorFallBack())
 
-    retval = main([str(target), str(subs_file), flag])
+    retval = main([str(target), "-s", str(subs_file), flag])
     assert retval == 0
 
     expected = (

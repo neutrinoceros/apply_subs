@@ -6,20 +6,21 @@ import pytest
 from apply_subs import __version__
 from apply_subs.main import main
 
-USAGE_MESSAGE = (
-    "usage: apply-subs [-h] [-i | -p | -cp] [-v] [target] [subs]\n\n"
-    "positional arguments:\n"
-    "  target                a target text file.\n"
-    "  subs                  json file describing substitutions to apply (order\n"
-    "                        matters).\n\n"
-    "optional arguments:\n"
-    "  -h, --help            show this help message and exit\n"
-    "  -i, --inplace\n"
-    "  -p, --patch           print a patch.\n"
-    "  -cp, --cpatch, --colored-patch\n"
-    "                        print a colored patch.\n"
-    "  -v, --version         print apply-subs version.\n"
-)
+USAGE_MESSAGE = """usage: apply-subs [-h] [-s SUBS] [-i | -p | -cp] [-v] [target ...]
+
+positional arguments:
+  target                target text file(s)
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -s SUBS, --subs SUBS  json file describing substitutions to apply (order
+                        matters).
+  -i, --inplace
+  -p, --patch           print a patch.
+  -cp, --cpatch, --colored-patch
+                        print a colored patch.
+  -v, --version         print apply-subs version.
+"""
 
 
 @pytest.mark.parametrize("argv", (["apply-subs"], ["apply-subs", "file1"]))
@@ -30,7 +31,8 @@ def test_missing_positionals(argv, capsys, monkeypatch):
 
     assert ret != 0
     assert out == ""
-    assert err == USAGE_MESSAGE
+    # skip the first line because it differs between macos and linux
+    assert err.splitlines()[1:] == USAGE_MESSAGE.splitlines()[1:]
 
 
 @pytest.mark.parametrize("flag", ["-v", "--version"])
