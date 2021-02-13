@@ -29,9 +29,7 @@ def test_inplace_substitution(simple_setup, capsys, flag: str):
     assert actual == expected
 
 
-@pytest.mark.parametrize(
-    "flag", ["-p", "--patch", "-cp", "--cpatch", "--colored-patch"]
-)
+@pytest.mark.parametrize("flag", ["-d", "--diff", "-cp", "--cdiff", "--colored-diff"])
 def test_patch(simple_setup, capsys, monkeypatch, flag: str):
     target, subs_file, _expected = simple_setup
 

@@ -46,14 +46,14 @@ def main(argv: Optional[List[str]] = None) -> int:
     )
     group = parser.add_mutually_exclusive_group()
     group.add_argument("-i", "--inplace", action="store_true")
-    group.add_argument("-p", "--patch", action="store_true", help="print a patch.")
+    group.add_argument("-d", "--diff", action="store_true", help="print a diff.")
     group.add_argument(
         "-cp",
-        "--cpatch",
-        "--colored-patch",
-        dest="colored_patch",
+        "--cdiff",
+        "--colored-diff",
+        dest="colored_diff",
         action="store_true",
-        help="print a colored patch.",
+        help="print a colored diff.",
     )
     parser.add_argument(
         "-v", "--version", action="store_true", help="print apply-subs version."
@@ -95,11 +95,11 @@ def main(argv: Optional[List[str]] = None) -> int:
         if args.inplace:
             with open(target, "w") as fh:
                 fh.write(new_content)
-        elif args.patch or args.colored_patch:
+        elif args.diff or args.colored_diff:
             s1 = open(target).read().splitlines(keepends=True)
             s2 = new_content.splitlines(keepends=True)
             diff = unified_diff(s1, s2, fromfile=target, tofile=f"{target} (patched)")
-            if args.colored_patch:
+            if args.colored_diff:
                 diff = colored_diff(diff)
             print("".join(list(diff)))
         else:
