@@ -8,11 +8,13 @@ from difflib import unified_diff
 from pathlib import Path
 from shutil import copy
 from subprocess import CalledProcessError, run
-from typing import List, Union
+from typing import List, Optional, Union
 
 from colorama import Fore
 from more_itertools import always_iterable
 from schema import Or, Schema
+
+from apply_subs import __version__
 
 BASE_COMMAND = ["sed", "-i", "-e"]
 
@@ -39,11 +41,13 @@ def colored_diff(diff):
             yield line
 
 
-def main(argv=None) -> int:
+def main(argv: Optional[List[str]] = None) -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("target", help="")
+    parser.add_argument("target", nargs="?", help="a target text file.")
     parser.add_argument(
-        "subs", help="json file describing substitutions to apply (order matters)."
+        "subs",
+        nargs="?",
+        help="json file describing substitutions to apply (order matters).",
     )
     group = parser.add_mutually_exclusive_group()
     group.add_argument("-i", "--inplace", action="store_true")
@@ -56,7 +60,25 @@ def main(argv=None) -> int:
         action="store_true",
         help="print a colored patch.",
     )
+    parser.add_argument(
+        "-v", "--version", action="store_true", help="print apply-subs version."
+    )
+
     args = parser.parse_args(argv)
+
+    if args.version:
+        print(__version__)
+        return 0
+
+    if argv is None:
+        argv = sys.argv
+        minlen = 3
+    else:
+        minlen = 2
+
+    if len(argv) < minlen:
+        parser.print_help(file=sys.stderr)
+        return 1
 
     if not Path(args.target).is_file():
         print(f"Error: {args.target} not found.", file=sys.stderr)
