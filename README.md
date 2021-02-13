@@ -1,4 +1,4 @@
-# `apply-subs`
+# apply-subs
 ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/neutrinoceros/apply_subs)
 [![codecov](https://codecov.io/gh/neutrinoceros/apply_subs/branch/main/graph/badge.svg)](https://codecov.io/gh/neutrinoceros/apply_subs)
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/neutrinoceros/apply_subs/main.svg)](https://results.pre-commit.ci/latest/github/neutrinoceros/apply_subs/main)
@@ -8,9 +8,8 @@
 Apply a dictionnary (json) of substitutions to a text file.
 ## Installing
 
-From the top level of the repo
 ```shell
-$ pip install .
+$ pip install apply-subs
 ```
 
 # Examples
