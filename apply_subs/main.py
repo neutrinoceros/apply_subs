@@ -3,10 +3,8 @@
 import argparse
 import json
 import sys
-import tempfile
 from difflib import unified_diff
 from pathlib import Path
-from shutil import copy
 from typing import List, Optional, Union
 
 from colorama import Fore
@@ -18,13 +16,10 @@ from apply_subs import __version__
 SUBS_SCHEMA = Schema({str: Or(str, list)})
 
 
-def _sub(to_replace: Union[str, List[str]], new: str, filename: str) -> str:
-    res = open(filename, "r").read()
+def _sub(to_replace: Union[str, List[str]], new: str, content: str) -> str:
     for old in always_iterable(to_replace):
-        res = res.replace(old, new)
-    with open(filename, "w") as fh:
-        fh.write(res)
-    return res
+        content = content.replace(old, new)
+    return content
 
 
 def colored_diff(diff):
@@ -90,12 +85,12 @@ def main(argv: Optional[List[str]] = None) -> int:
         print("Error: unrecognized json schema.", file=sys.stderr)
         return 1
 
-    with tempfile.NamedTemporaryFile() as workfile:
-        copy(args.target, workfile.name)
-        for new, old in subs.items():
-            _sub(old, new, workfile.name)
-        with open(workfile.name, "r") as fh:
-            new_content = fh.read()
+    with open(args.target, "r") as fh:
+        new_content = fh.read()
+
+    for new, old in subs.items():
+        new_content = _sub(old, new, new_content)
+
     if args.inplace:
         with open(args.target, "w") as fh:
             fh.write(new_content)
