@@ -52,3 +52,13 @@ def test_patch(simple_setup, capsys, monkeypatch, flag: str):
     res = "".join(out.splitlines(keepends=True)[4:])
     assert res == expected
     assert err == ""
+
+
+def test_multiple_targets(multiple_targets_setup, capsys):
+    targets, subs_file, expected = multiple_targets_setup
+    ret = main([*[str(t) for t in targets], "-s", str(subs_file)])
+    assert ret == 0
+
+    out, err = capsys.readouterr()
+    assert out == expected
+    assert err == ""
