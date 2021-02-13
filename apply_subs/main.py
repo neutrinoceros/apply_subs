@@ -42,6 +42,7 @@ def main(argv: Optional[List[str]] = None) -> int:
         "-s",
         "--subs",
         action="store",
+        default=None,
         help="json file describing substitutions to apply (order matters).",
     )
     group = parser.add_mutually_exclusive_group()
@@ -65,13 +66,7 @@ def main(argv: Optional[List[str]] = None) -> int:
         print(__version__)
         return 0
 
-    if argv is None:
-        argv = sys.argv
-        minlen = 3
-    else:
-        minlen = 2
-
-    if len(argv) < minlen:
+    if not args.target or args.subs is None:
         parser.print_help(file=sys.stderr)
         return 1
 
