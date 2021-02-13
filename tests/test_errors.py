@@ -17,19 +17,6 @@ def test_missing_target(simple_setup, capsys):
     assert err == f"Error: {typo_target} not found.\n"
 
 
-def test_broken_call(simple_setup, capsys, monkeypatch):
-    target, subs_file, expected = simple_setup
-
-    monkeypatch.setattr("apply_subs.main.BASE_COMMAND", ["not_a_real_command $HOME"])
-
-    retval = main([str(target), str(subs_file)])
-    assert retval != 0
-
-    out, err = capsys.readouterr()
-    assert out == ""
-    assert err == f"Error: failed to apply subsitutions to {target}\n"
-
-
 def test_invalid_schema(tmp_path, capsys):
     target = tmp_path / "hello.txt"
     target.write_text("nothing")

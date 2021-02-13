@@ -7,7 +7,6 @@ import tempfile
 from difflib import unified_diff
 from pathlib import Path
 from shutil import copy
-from subprocess import CalledProcessError, run
 from typing import List, Optional, Union
 
 from colorama import Fore
@@ -16,16 +15,16 @@ from schema import Or, Schema
 
 from apply_subs import __version__
 
-BASE_COMMAND = ["sed", "-i", "-e"]
-
 SUBS_SCHEMA = Schema({str: Or(str, list)})
 
 
 def _sub(to_replace: Union[str, List[str]], new: str, filename: str) -> str:
+    res = open(filename, "r").read()
     for old in always_iterable(to_replace):
-        comm = BASE_COMMAND + [f"s/{old}/{new}/g", filename]
-        res = run(comm, capture_output=True, check=True)
-    return res.stdout.decode()
+        res = res.replace(old, new)
+    with open(filename, "w") as fh:
+        fh.write(res)
+    return res
 
 
 def colored_diff(diff):
@@ -94,14 +93,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     with tempfile.NamedTemporaryFile() as workfile:
         copy(args.target, workfile.name)
         for new, old in subs.items():
-            try:
-                _sub(old, new, workfile.name)
-            except (CalledProcessError, FileNotFoundError):
-                print(
-                    f"Error: failed to apply subsitutions to {args.target}",
-                    file=sys.stderr,
-                )
-                return 1
+            _sub(old, new, workfile.name)
         with open(workfile.name, "r") as fh:
             new_content = fh.read()
     if args.inplace:
