@@ -14,7 +14,7 @@ def test_missing_target(simple_setup, capsys):
 
     out, err = capsys.readouterr()
     assert out == ""
-    assert err == f"Error: {typo_target} not found.\n"
+    assert err.replace("\n", "") == f"Error: {typo_target} not found."
 
 
 def test_invalid_schema(tmp_path, capsys):

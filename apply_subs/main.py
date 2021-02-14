@@ -7,13 +7,18 @@ from difflib import unified_diff
 from pathlib import Path
 from typing import List, Optional, Union
 
-from colorama import Fore
 from more_itertools import always_iterable
+from rich import print
 from schema import Or, Schema
 
 from apply_subs import __version__
 
 SUBS_SCHEMA = Schema({str: Or(str, list)})
+
+
+def print_err(message: str) -> None:
+
+    print(f"[red][bold]Error:[/bold][/red] {message}", file=sys.stderr)
 
 
 def _sub(to_replace: Union[str, List[str]], new: str, content: str) -> str:
@@ -28,9 +33,9 @@ def colored_diff(diff):
 
     for line in diff:
         if line.startswith("+"):
-            yield Fore.GREEN + line + Fore.RESET
+            yield f"[green]{line}[/green]"
         elif line.startswith("-"):
-            yield Fore.RED + line + Fore.RESET
+            yield f"[red]{line}[/red]"
         else:
             yield line
 
@@ -49,7 +54,8 @@ def main(argv: Optional[List[str]] = None) -> int:
     group.add_argument("-i", "--inplace", action="store_true")
     group.add_argument("-d", "--diff", action="store_true", help="print a diff.")
     group.add_argument(
-        "-cp",
+        "-cd",
+        "--cd",
         "--cdiff",
         "--colored-diff",
         dest="colored_diff",
@@ -66,20 +72,30 @@ def main(argv: Optional[List[str]] = None) -> int:
         print(__version__)
         return 0
 
-    if not args.target or args.subs is None:
+    if not args.target:
+        print_err("no target file provided.")
         parser.print_help(file=sys.stderr)
         return 1
 
-    with open(args.subs, "r") as fh:
-        subs = json.load(fh)
+    if args.subs is None:
+        print_err("`--subs/-s` flag is mandatory.")
+        parser.print_help(file=sys.stderr)
+        return 1
+
+    try:
+        with open(args.subs, "r") as fh:
+            subs = json.load(fh)
+    except json.decoder.JSONDecodeError:
+        print_err(f"invalid json file `{args.subs}`")
+        return 1
 
     if not SUBS_SCHEMA.is_valid(subs):
-        print("Error: unrecognized json schema.", file=sys.stderr)
+        print_err("unrecognized json schema.")
         return 1
 
     for target in args.target:
         if not Path(target).is_file():
-            print(f"Error: {target} not found.", file=sys.stderr)
+            print_err(f"{target} not found.")
             return 1
         with open(target, "r") as fh:
             new_content = fh.read()

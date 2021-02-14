@@ -29,15 +29,11 @@ def test_inplace_substitution(simple_setup, capsys, flag: str):
     assert actual == expected
 
 
-@pytest.mark.parametrize("flag", ["-d", "--diff", "-cp", "--cdiff", "--colored-diff"])
+@pytest.mark.parametrize(
+    "flag", ["-d", "--diff", "--cd", "-cd", "--cdiff", "--colored-diff"]
+)
 def test_patch(simple_setup, capsys, monkeypatch, flag: str):
     target, subs_file, _expected = simple_setup
-
-    class ColorFallBack:
-        def __getattr__(self, name):
-            return ""
-
-    monkeypatch.setattr("apply_subs.main.Fore", ColorFallBack())
 
     retval = main([str(target), "-s", str(subs_file), flag])
     assert retval == 0
@@ -50,7 +46,9 @@ def test_patch(simple_setup, capsys, monkeypatch, flag: str):
     )
     out, err = capsys.readouterr()
     res = "".join(out.splitlines(keepends=True)[4:])
-    assert res == expected
+    assert expected in res
+    target_len = len(expected.splitlines())
+    assert len(res.splitlines()) in list(range(target_len, target_len + 3))
     assert err == ""
 
 
