@@ -27,8 +27,8 @@ optional arguments:
 @pytest.mark.parametrize(
     "argv,expected_err",
     (
-        (["apply-subs"], "Error: no target file provided."),
-        (["apply-subs", "file1"], "Error: `--subs/-s` flag is mandatory."),
+        (["apply-subs"], "Error no target file provided."),
+        (["apply-subs", "file1"], "Error `--subs/-s` flag is mandatory."),
     ),
 )
 def test_missing_positionals(argv, expected_err, capsys, monkeypatch):
@@ -53,7 +53,7 @@ def test_broken_json(capsys, tmp_path):
 
     assert ret != 0
     assert out == ""
-    assert err.replace("\n", "") == f"Error: invalid json file `{f2}`"
+    assert err.replace("\n", "") == f"Error invalid json file `{f2}`"
 
 
 @pytest.mark.parametrize("flag", ["-v", "--version"])
