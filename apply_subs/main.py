@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import List, Optional, Union
 
 from more_itertools import always_iterable
-from rich import print
+from rich import print as rprint
 from schema import Or, Schema
 
 from apply_subs import __version__
@@ -17,8 +17,7 @@ SUBS_SCHEMA = Schema({str: Or(str, list)})
 
 
 def print_err(message: str) -> None:
-
-    print(f"[red][bold]Error:[/bold][/red] {message}", file=sys.stderr)
+    rprint(f"[bold white on red]Error[/] {message}", file=sys.stderr)
 
 
 def _sub(to_replace: Union[str, List[str]], new: str, content: str) -> str:
@@ -114,7 +113,7 @@ def main(argv: Optional[List[str]] = None) -> int:
                 diff = colored_diff(diff)
             toprint = "".join(list(diff))
             if toprint:
-                print(toprint)
+                rprint(toprint)
         else:
-            print(new_content, end="")
+            rprint(new_content, end="")
     return 0
