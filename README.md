@@ -6,14 +6,19 @@
 [![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort/)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-A command line tool to apply a dictionnary (json) of substitutions to text files.
+A command line tool to apply a dictionnary (json) of substitutions to text file corpus.
+This program is a find-and-replace tool to perform a arbitrarily large set of substitutions in a
+reproducible fashion.
+
 # Installation
 
 The easiest installation method is
 ```shell
 $ pip install apply-subs
 ```
-In order to install `apply-sub` in isolation, use [`pipx`](https://pipxproject.github.io/pipx/) instead.
+In order to install `apply-subs` in isolation, use [`pipx`](https://pipxproject.github.io/pipx/) instead.
+
+
 # Examples
 
 ## minimal case
