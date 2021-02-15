@@ -112,7 +112,9 @@ def main(argv: Optional[List[str]] = None) -> int:
             diff = unified_diff(s1, s2, fromfile=target, tofile=f"{target} (patched)")
             if args.colored_diff:
                 diff = colored_diff(diff)
-            print("".join(list(diff)))
+            toprint = "".join(list(diff))
+            if toprint:
+                print(toprint)
         else:
             print(new_content, end="")
     return 0
