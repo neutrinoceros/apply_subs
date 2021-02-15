@@ -71,3 +71,16 @@ def test_config_version():
     expected = __version__
     actual = config["metadata"]["version"]
     assert actual == expected
+
+
+def test_empty_diff(tmp_path, capsys):
+    f1 = tmp_path / "file1.txt"
+    f2 = tmp_path / "file2.json"
+    f1.touch()
+    f2.write_text('{"nothing": "emtpy"}')
+    ret = main([str(f1), "--subs", str(f2), "--diff"])
+    out, err = capsys.readouterr()
+
+    assert ret == 0
+    assert out == ""
+    assert err == ""
