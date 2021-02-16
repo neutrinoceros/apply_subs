@@ -84,6 +84,9 @@ def main(argv: Optional[List[str]] = None) -> int:
     try:
         with open(args.subs, "r") as fh:
             subs = json.load(fh)
+    except FileNotFoundError:
+        print_err(f"{args.subs} not found.")
+        return 1
     except json.decoder.JSONDecodeError:
         print_err(f"invalid json file `{args.subs}`")
         return 1

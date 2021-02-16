@@ -1,20 +1,30 @@
 import json
+from typing import Tuple
+
+import pytest
 
 from apply_subs.main import main
 
 
-def test_missing_target(simple_setup, capsys):
-    target, subs_file, expected = simple_setup
+@pytest.mark.parametrize("missing", [(True, True), (True, False), (False, True)])
+def test_missing_files(simple_setup, capsys, missing: Tuple[bool, bool]):
+    target, subs_file, _expected = simple_setup
 
-    typo_target = target.with_suffix(".this_file_doesnt_exists")
-    assert not typo_target.exists()
+    if missing[0]:
+        target = target.with_suffix(".this_file_doesnt_exists")
+        assert not target.exists()
+        expected_err = f"Error {target} not found."
+    if missing[1]:
+        subs_file = subs_file.with_suffix(".this_file_doesnt_exists")
+        assert not subs_file.exists()
+        expected_err = f"Error {subs_file} not found."
 
-    retval = main([str(typo_target), "-s", str(subs_file)])
-    assert retval != 0
+    ret = main([str(target), "-s", str(subs_file)])
+    assert ret != 0
 
     out, err = capsys.readouterr()
     assert out == ""
-    assert err.replace("\n", "") == f"Error {typo_target} not found."
+    assert err.replace("\n", "") == expected_err
 
 
 def test_invalid_schema(tmp_path, capsys):
