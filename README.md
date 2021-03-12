@@ -29,7 +29,7 @@ $ apply-subs mytext.txt -s mysubs.json
 ```
 will print the patched content
 ```
-Hello dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore goodbye.
+Hello dolor sit amet, consectetur goodbye
 ```
 
 ## diff mode
